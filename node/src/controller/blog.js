@@ -17,3 +17,14 @@ exports.getList = (author, keyword) => {
     }
   ];
 };
+
+exports.getDetail = id => {
+  // 先返回假数据
+  return {
+    id: 1,
+    title: "标题A",
+    content: "内容A",
+    createTime: 1564129277991,
+    author: "作者A"
+  };
+};

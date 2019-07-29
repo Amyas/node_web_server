@@ -1,4 +1,4 @@
-const { getList } = require("../controller/blog");
+const { getList, getDetail } = require("../controller/blog");
 const { SuccessModel, ErrorModel } = require("../model/resModel");
 
 module.exports = (req, res) => {
@@ -14,7 +14,9 @@ module.exports = (req, res) => {
         return new SuccessModel(listData);
 
       case "/api/blog/detail":
-        return { msg: "获取博客详情" };
+        const id = req.query.id;
+        const data = getDetail(id);
+        return new SuccessModel(data);
       default:
         break;
     }
