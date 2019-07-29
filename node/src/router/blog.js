@@ -1,4 +1,9 @@
-const { getList, getDetail, createBlog } = require("../controller/blog");
+const {
+  getList,
+  getDetail,
+  createBlog,
+  updateBlog
+} = require("../controller/blog");
 const { SuccessModel, ErrorModel } = require("../model/resModel");
 
 module.exports = (req, res) => {
@@ -28,7 +33,13 @@ module.exports = (req, res) => {
         const data = createBlog(req.body);
         return new SuccessModel(data);
       case "/api/blog/update":
-        return { msg: "更新博客" };
+        const id = req.query.id;
+        const result = updateBlog(id, req.body);
+        if (result) {
+          return new SuccessModel();
+        } else {
+          return new ErrorModel("更新博客失败");
+        }
       case "/api/blog/del":
         return { msg: "删除博客" };
       default:

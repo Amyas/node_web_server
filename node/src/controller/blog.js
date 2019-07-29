@@ -35,3 +35,7 @@ exports.createBlog = (data = {}) => {
     id: 3
   };
 };
+
+exports.updateBlog = (id, data = {}) => {
+  return true;
+};
