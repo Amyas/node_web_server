@@ -1,3 +1,6 @@
+const { getList } = require("../controller/blog");
+const { SuccessModel, ErrorModel } = require("../model/resModel");
+
 module.exports = (req, res) => {
   const method = req.method;
   const path = req.path;
@@ -5,7 +8,11 @@ module.exports = (req, res) => {
   if (method === "GET") {
     switch (path) {
       case "/api/blog/list":
-        return { msg: "获取博客列表" };
+        const author = req.query.author || "";
+        const keyword = req.query.keyword || "";
+        const listData = getList(author, keyword);
+        return new SuccessModel(listData);
+
       case "/api/blog/detail":
         return { msg: "获取博客详情" };
       default:
