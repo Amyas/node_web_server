@@ -39,3 +39,7 @@ exports.createBlog = (data = {}) => {
 exports.updateBlog = (id, data = {}) => {
   return true;
 };
+
+exports.removeBlog = id => {
+  return true;
+};
