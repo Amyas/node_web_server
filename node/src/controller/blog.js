@@ -28,3 +28,10 @@ exports.getDetail = id => {
     author: "作者A"
   };
 };
+
+exports.createBlog = (data = {}) => {
+  // data是一个博客对象，包含 titlle content
+  return {
+    id: 3
+  };
+};

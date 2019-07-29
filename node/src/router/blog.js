@@ -1,4 +1,4 @@
-const { getList, getDetail } = require("../controller/blog");
+const { getList, getDetail, createBlog } = require("../controller/blog");
 const { SuccessModel, ErrorModel } = require("../model/resModel");
 
 module.exports = (req, res) => {
@@ -25,7 +25,8 @@ module.exports = (req, res) => {
   if (method === "POST") {
     switch (path) {
       case "/api/blog/new":
-        return { msg: "新增博客" };
+        const data = createBlog(req.body);
+        return new SuccessModel(data);
       case "/api/blog/update":
         return { msg: "更新博客" };
       case "/api/blog/del":
