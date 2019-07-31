@@ -11,44 +11,42 @@ module.exports = (req, res) => {
   const method = req.method;
   const path = req.path;
 
-  if (method === "GET") {
-    switch (path) {
-      case "/api/blog/list":
-        const author = req.query.author || "";
-        const keyword = req.query.keyword || "";
-        const listData = getList(author, keyword);
-        return new SuccessModel(listData);
-
-      case "/api/blog/detail":
-        const id = req.query.id;
-        const data = getDetail(id);
-        return new SuccessModel(data);
-      default:
-        break;
-    }
+  if (method === "GET" && path === "/api/blog/list") {
+    const author = req.query.author || "";
+    const keyword = req.query.keyword || "";
+    return getList(author, keyword).then(data => {
+      return new SuccessModel(data);
+    });
   }
 
-  if (method === "POST") {
-    switch (path) {
-      case "/api/blog/new":
-        const data = createBlog(req.body);
-        return new SuccessModel(data);
-      case "/api/blog/update":
-        const result = updateBlog(req.query.id, req.body);
-        if (result) {
-          return new SuccessModel();
-        } else {
-          return new ErrorModel("更新博客失败");
-        }
-      case "/api/blog/del":
-        const delResult = removeBlog(req.query.id);
-        if (delResult) {
-          return new SuccessModel();
-        } else {
-          return new ErrorModel("删除博客失败");
-        }
-      default:
-        break;
-    }
+  if (method === "GET" && path === "/api/blog/detail") {
+    const id = req.query.id;
+    return getDetail(id).then(data => {
+      return new SuccessModel(data);
+    });
+  }
+
+  if (method === "POST" && path === "/api/blog/new") {
+    return createBlog(req.body).then(data => {
+      return new SuccessModel(data);
+    });
+  }
+
+  if (method === "POST" && path === "/api/blog/update") {
+    return updateBlog(req.query.id, req.body).then(data => {
+      if (data) {
+        return new SuccessModel("更新成功");
+      }
+      return new ErrorModel("更新失败");
+    });
+  }
+
+  if (method === "POST" && path === "/api/blog/del") {
+    return removeBlog(req.query.id, req.query.author).then(data => {
+      if (data) {
+        return new SuccessModel("删除成功");
+      }
+      return new ErrorModel("删除失败");
+    });
   }
 };

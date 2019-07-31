@@ -7,10 +7,11 @@ module.exports = (req, res) => {
 
   if (method === "POST" && path === "/api/user/login") {
     const { username, password } = req.body;
-    const result = login(username, password);
-    if (result) {
-      return new SuccessModel();
-    }
-    return new ErrorModel("登录失败");
+    return login(username, password).then(data => {
+      if (data.username) {
+        return new SuccessModel(data);
+      }
+      return new ErrorModel("登录失败");
+    });
   }
 };

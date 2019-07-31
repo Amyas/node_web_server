@@ -43,15 +43,19 @@ const serverHandle = async (req, res) => {
   const postData = await getPostData(req);
   req.body = postData;
 
-  const blogData = handleBlogRouter(req, res);
-  if (blogData) {
-    res.end(JSON.stringify(blogData));
+  const blogResult = handleBlogRouter(req, res);
+  if (blogResult) {
+    blogResult.then(data => {
+      res.end(JSON.stringify(data));
+    });
     return;
   }
 
-  const userData = handleUserRouter(req, res);
-  if (userData) {
-    res.end(JSON.stringify(userData));
+  const userRusult = handleUserRouter(req, res);
+  if (userRusult) {
+    userRusult.then(data => {
+      res.end(JSON.stringify(data));
+    });
     return;
   }
 
