@@ -14,15 +14,15 @@ export default new Router({
       component: Home
     },
     {
+      path: '/detail/:id',
+      component: () => import('./views/detail')
+    },
+    {
       path: '/admin',
       component: () => import('./views/admin')
     },
     {
-      path: '/detail',
-      component: () => import('./views/detail')
-    },
-    {
-      path: '/edit',
+      path: '/edit/:id',
       component: () => import('./views/edit')
     },
     {
