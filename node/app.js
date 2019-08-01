@@ -1,5 +1,5 @@
 const querystring = require("querystring");
-
+const { get, set } = require("./src/db/redis");
 const handleBlogRouter = require("./src/router/blog");
 const handleUserRouter = require("./src/router/user");
 
@@ -28,6 +28,13 @@ const getPostData = req => {
   });
 };
 
+// cookie 过期时间
+const getCookieExpires = () => {
+  const d = new Date();
+  d.setTime(d.getTime() + 24 * 60 * 60 * 1000);
+  return d.toGMTString();
+};
+
 const serverHandle = async (req, res) => {
   // 设置返回格式 JSON
   res.setHeader("Content-Type", "application/json");
@@ -39,6 +46,38 @@ const serverHandle = async (req, res) => {
   // 解析 query
   req.query = querystring.parse(url.split("?")[1]);
 
+  // 解析 cookie
+  req.cookie = {};
+  const cookie = req.headers.cookie || "";
+  cookie.split(";").forEach(item => {
+    if (!item) return;
+
+    const [key, val] = item.split("=");
+    req.cookie[key] = val;
+  });
+
+  // 解析 session 使用 redis
+  let needSetCookie = false;
+  let userId = req.cookie.userid;
+  if (!userId) {
+    needSetCookie = true;
+    userId = `${Date.now()}_${Math.random()}`;
+    // 初始化 redis 中的 session 值
+    set(userId, {});
+  }
+
+  // 获取 session
+  req.sessionId = userId;
+  const sessionData = await get(req.sessionId);
+  if (sessionData == null) {
+    // 初始化 redis 中的 session 值
+    set(req.sessionId, {});
+    // 设置 session
+    req.session = {};
+  } else {
+    req.session = sessionData;
+  }
+
   // 处理 post data
   const postData = await getPostData(req);
   req.body = postData;
@@ -46,6 +85,12 @@ const serverHandle = async (req, res) => {
   const blogResult = handleBlogRouter(req, res);
   if (blogResult) {
     blogResult.then(data => {
+      if (needSetCookie) {
+        res.setHeader(
+          "Set-Cookie",
+          `userid=${userId}; path=/; httpOnly; expires=${getCookieExpires()}`
+        );
+      }
       res.end(JSON.stringify(data));
     });
     return;
@@ -54,6 +99,12 @@ const serverHandle = async (req, res) => {
   const userRusult = handleUserRouter(req, res);
   if (userRusult) {
     userRusult.then(data => {
+      if (needSetCookie) {
+        res.setHeader(
+          "Set-Cookie",
+          `userid=${userId}; path=/; httpOnly; expires=${getCookieExpires()}`
+        );
+      }
       res.end(JSON.stringify(data));
     });
     return;
