@@ -54,7 +54,9 @@ export default {
     },
     handleDel (id) {
       blogApi.del(id).then(async res => {
-        const { data } = await blogApi.list()
+        const { data } = await blogApi.list({
+          isadmin: 1
+        })
         this.list = data
       })
     }
