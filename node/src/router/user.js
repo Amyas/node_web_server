@@ -1,13 +1,13 @@
 const { login } = require("../controller/user");
 const { SuccessModel, ErrorModel } = require("../model/resModel");
-const { set, get } = require("../db/redis");
+const { set } = require("../db/redis");
 
 module.exports = (req, res) => {
   const method = req.method;
   const path = req.path;
 
-  if (method === "GET" && path === "/api/user/login") {
-    const { username, password } = req.query;
+  if (method === "POST" && path === "/api/user/login") {
+    const { username, password } = req.body;
     return login(username, password).then(data => {
       if (data.username) {
         // 设置 session
