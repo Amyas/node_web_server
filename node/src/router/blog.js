@@ -19,8 +19,18 @@ module.exports = (req, res) => {
   const path = req.path;
 
   if (method === "GET" && path === "/api/blog/list") {
-    const author = req.query.author || "";
+    let author = req.query.author || "";
     const keyword = req.query.keyword || "";
+    if (req.query.isadmin) {
+      // 管理员界面
+      const loginCheckResult = loginCheck(req);
+      if (loginCheckResult) {
+        // 未登录
+        return loginCheckResult;
+      }
+      // 强制查询自己的博客
+      author = req.session.username;
+    }
     return getList(author, keyword).then(data => {
       return new SuccessModel(data);
     });
@@ -51,6 +61,7 @@ module.exports = (req, res) => {
       // 未登录
       return loginCheckResult;
     }
+    req.body.author = req.session.username;
     return updateBlog(req.query.id, req.body).then(data => {
       if (data) {
         return new SuccessModel("更新成功");

@@ -38,8 +38,8 @@ exports.createBlog = (data = {}) => {
 };
 
 exports.updateBlog = (id, data = {}) => {
-  const { title, content } = data;
-  let sql = `update blogs set title = '${title}', content = '${content}' where id = '${id}';`;
+  const { title, content, author } = data;
+  let sql = `update blogs set title = '${title}', content = '${content}' where id = '${id}' and author = '${author}';`;
   return exec(sql).then(data => {
     if (data.affectedRows > 0) {
       return true;

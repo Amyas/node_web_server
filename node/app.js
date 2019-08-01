@@ -10,7 +10,8 @@ const getPostData = req => {
       resolve({});
       return;
     }
-    if (req.headers["content-type"] !== "application/json") {
+    const contentType = req.headers["content-type"].toLowerCase();
+    if (contentType.indexOf("application/json") === -1) {
       resolve({});
       return;
     }
