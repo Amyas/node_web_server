@@ -5,7 +5,6 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
 var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
 const blogRouter = require("./routes/blog");
 const userRouter = require("./routes/user");
 
@@ -17,7 +16,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
 app.use("/api/blog", blogRouter);
 app.use("/api/user", userRouter);
 
