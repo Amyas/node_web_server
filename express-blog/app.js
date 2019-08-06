@@ -4,6 +4,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const session = require("express-session");
+const RedisStore = require("connect-redis")(session);
 
 var indexRouter = require("./routes/index");
 const blogRouter = require("./routes/blog");
@@ -15,6 +16,12 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+const redisClient = require("./db/redis");
+const sessionStore = new RedisStore({
+  client: redisClient
+});
+
 app.use(
   session({
     secret: "amyas",
@@ -22,7 +29,8 @@ app.use(
       // path: "/", //默认配置
       // httpOnly: true, //默认配置
       maxAge: 24 * 60 * 60 * 1000 //24小时
-    }
+    },
+    store: sessionStore
   })
 );
 
