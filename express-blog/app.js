@@ -3,6 +3,7 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+const session = require("express-session");
 
 var indexRouter = require("./routes/index");
 const blogRouter = require("./routes/blog");
@@ -14,6 +15,16 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(
+  session({
+    secret: "amyas",
+    cookie: {
+      // path: "/", //默认配置
+      // httpOnly: true, //默认配置
+      maxAge: 24 * 60 * 60 * 1000 //24小时
+    }
+  })
+);
 
 app.use("/", indexRouter);
 app.use("/api/blog", blogRouter);
