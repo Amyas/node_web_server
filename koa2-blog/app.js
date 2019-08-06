@@ -5,6 +5,9 @@ const json = require("koa-json");
 const onerror = require("koa-onerror");
 const bodyparser = require("koa-bodyparser");
 const logger = require("koa-logger");
+const session = require("koa-generic-session");
+const redisStore = require("koa-redis");
+const { REIDS_CONF } = require("./conf/db");
 
 const index = require("./routes/index");
 const blog = require("./routes/blog");
@@ -29,6 +32,23 @@ app.use(async (ctx, next) => {
   const ms = new Date() - start;
   console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
 });
+
+// session 配置
+app.keys = ["amyas"];
+app.use(
+  session({
+    // 配置cookie
+    cookie: {
+      path: "/",
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000
+    },
+    // 配置redis
+    store: redisStore({
+      all: `${REIDS_CONF.host}:${REIDS_CONF.port}`
+    })
+  })
+);
 
 // routes
 app.use(index.routes(), index.allowedMethods());
