@@ -5,6 +5,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const session = require("express-session");
 const RedisStore = require("connect-redis")(session);
+const fs = require("fs");
 
 var indexRouter = require("./routes/index");
 const blogRouter = require("./routes/blog");
@@ -12,7 +13,19 @@ const userRouter = require("./routes/user");
 
 var app = express();
 
-app.use(logger("dev"));
+if (process.env.NODE_ENV !== "production") {
+  app.use(logger("dev"));
+} else {
+  const logFilename = path.join(__dirname, "logs", "access.log");
+  const writeStream = fs.createWriteStream(logFilename, {
+    flags: "a"
+  });
+  app.use(
+    logger("combined", {
+      stream: writeStream
+    })
+  );
+}
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
